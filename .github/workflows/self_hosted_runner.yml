@@ -26,3 +26,11 @@ jobs:
             -u ${{ secrets.service_principal_client_id }} \
             -p ${{ secrets.service_principal_client_secret }}
 
+      - name: Replace tokens
+        run: |
+          sed -i "s/replacetoken/${{ secrets.runnertoken }}/g" install-runner.sh
+          sed -i "s/replacerepo/Oddjob62/self_hosted_runner/g" install-runner.sh
+          sed -i "s/replacelabel/production/g" scripts/deploy/install-runner.sh
+
+          cat install_runner.sh
+
