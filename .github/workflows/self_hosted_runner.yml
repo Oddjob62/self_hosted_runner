@@ -28,9 +28,9 @@ jobs:
 
       - name: Replace tokens
         run: |
-          sed -i "s/replacetoken/${{ secrets.runnertoken }}/g" install-runner.sh
-          sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" install-runner.sh
-          sed -i "s/replacelabel/production/g" install-runner.sh
+          sed -i "s/replacetoken/${{ secrets.runnertoken }}/g" scripts/install-runner.sh
+          sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" scripts/install-runner.sh
+          sed -i "s/replacelabel/production/g" scripts/install-runner.sh
           ls -l
           cat install-runner.sh
 
