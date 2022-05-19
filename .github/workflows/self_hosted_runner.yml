@@ -36,10 +36,10 @@ jobs:
 
       - name: Replace Runner VM
         run: |
-          subnetId=$(az network vnet subnet show -g "SelfhostedTest" -n "default" --vnet-name "vnet1" -o tsv --query "id")
+          subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name "vnet1" -o tsv --query "id")
 
-          az vm create -g ${{ inputs.runner_rg }} \
-            -n ${{ inputs.runner_name }} \
+          az vm create -g ${{ $RUNNER_RG }} \
+            -n ${{ "TestRunner" }} \
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image $imageId \
@@ -50,4 +50,6 @@ jobs:
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nsg "" \
+        env:
+          RUNNER_RG: SelfhostedTest
 
