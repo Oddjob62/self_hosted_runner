@@ -1,7 +1,7 @@
 name: "Self-Hosted Runner"
 
 on:
-  workflow_call:
+  workflow_dispatch:
     secrets:
       tenant_id:
         required: true
@@ -21,7 +21,7 @@ jobs:
 
       - name: az login
         run: |
-          az login --tenant ${{ tenant_id }} \
+          az login --tenant ${{ secrets.tenant_id }} \
             --service-principal \
             -u ${{ secrets.service_principal_client_id }} \
             -p ${{ secrets.service_principal_client_secret }}
