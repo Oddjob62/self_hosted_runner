@@ -1,3 +1,4 @@
+#!/bin/bash
 echo starting
 sudo -i -u runner bash << EOF
 cd ~

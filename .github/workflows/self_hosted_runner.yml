@@ -34,3 +34,20 @@ jobs:
           ls -l
           cat install-runner.sh
 
+      - name: Replace Runner VM
+        run: |
+          subnetId=$(az network vnet subnet show -g "SelfhostedTest" -n "default" --vnet-name "vnet1" -o tsv --query "id")
+
+          az vm create -g ${{ inputs.runner_rg }} \
+            -n ${{ inputs.runner_name }} \
+            --size Standard_B2ms \
+            --assign-identity "[system]" \
+            --image $imageId \
+            --generate-ssh-keys \
+            --custom-data ./install-runner.sh \
+            --public-ip-address "" \
+            --subnet $subnetId \
+            --nic-delete-option delete \
+            --os-disk-delete-option delete \
+            --nsg "" \
+
