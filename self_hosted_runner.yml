@@ -1,0 +1,28 @@
+name: "Self-Hosted Runner"
+
+on:
+  workflow_call:
+    secrets:
+      tenant_id:
+        required: true
+      service_principal_client_id:
+        description: 'The service principal client ID'
+        required: true
+      service_principal_client_secret:
+        description: 'The service principal client secret'
+        required: true
+
+jobs:
+  build-runner:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: az login
+        run: |
+          az login --tenant ${{ tenant_id }} \
+            --service-principal \
+            -u ${{ secrets.service_principal_client_id }} \
+            -p ${{ secrets.service_principal_client_secret }}
+
