@@ -44,7 +44,7 @@ jobs:
             --image UbuntuLTS \
             --ssh-key-value id_rsa.pub \
             --admin-username adminuser \
-            --custom-data ./scripts/install-runner.sh \
+            --custom-data ./scripts/simple_bash.sh \
             --subnet $subnetId \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
