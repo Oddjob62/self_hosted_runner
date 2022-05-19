@@ -38,8 +38,8 @@ jobs:
         run: |
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name "vnet1" -o tsv --query "id")
 
-          az vm create -g ${{ $RUNNER_RG }} \
-            -n ${{ "TestRunner" }} \
+          az vm create -g $RUNNER_RG \
+            -n "TestRunner" \
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image UbuntuLTS \
