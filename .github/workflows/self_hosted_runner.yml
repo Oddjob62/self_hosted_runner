@@ -32,7 +32,6 @@ jobs:
           sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" scripts/install-runner.sh
           sed -i "s/replacelabel/production/g" scripts/install-runner.sh
           ls -l
-          cat install-runner.sh
 
       - name: Build Runner VM
         run: |
