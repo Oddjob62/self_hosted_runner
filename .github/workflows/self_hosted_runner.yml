@@ -32,5 +32,5 @@ jobs:
           sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" install-runner.sh
           sed -i "s/replacelabel/production/g" install-runner.sh
           ls -l
-          cat install_runner.sh
+          cat install-runner.sh
 
