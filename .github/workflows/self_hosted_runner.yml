@@ -43,9 +43,8 @@ jobs:
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image UbuntuLTS \
-            --generate-ssh-keys \
+            --ssh-key-value id_rsa.pub \
             --custom-data ./install-runner.sh \
-            --public-ip-address "" \
             --subnet $subnetId \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
