@@ -42,7 +42,7 @@ jobs:
             -n ${{ "TestRunner" }} \
             --size Standard_B2ms \
             --assign-identity "[system]" \
-            --image $imageId \
+            --image UbuntuLTS \
             --generate-ssh-keys \
             --custom-data ./install-runner.sh \
             --public-ip-address "" \
