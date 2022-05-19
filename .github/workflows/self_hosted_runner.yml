@@ -34,7 +34,7 @@ jobs:
           ls -l
           cat install-runner.sh
 
-      - name: Replace Runner VM
+      - name: Build Runner VM
         run: |
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name "vnet1" -o tsv --query "id")
 
@@ -49,7 +49,9 @@ jobs:
             --subnet $subnetId \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
-            --nsg "" \
+            --nsg ""
+
+          cat ~/.ssh/id_rsa
         env:
           RUNNER_RG: SelfhostedTest
 
