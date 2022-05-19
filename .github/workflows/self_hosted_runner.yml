@@ -43,7 +43,7 @@ jobs:
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image UbuntuLTS \
-            --ssh-key-value ./id_rsa.pub \
+            --ssh-key-value id_rsa.pub \
             --custom-data ./install-runner.sh \
             --subnet $subnetId \
             --nic-delete-option delete \
