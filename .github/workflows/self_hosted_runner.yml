@@ -79,7 +79,7 @@ jobs:
             --nsg ""
 
       - name: Delete Runner VM
-        if: github.event.inputs.CreateOrDelete == "Delete"
+        if: github.event.inputs.CreateOrDelete == 'Delete'
         run: | 
           az vm delete
             --name "TestRunner"
