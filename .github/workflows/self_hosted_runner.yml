@@ -102,7 +102,9 @@ jobs:
         run: |
           ./policy-exemptions/remove-runnerexemptions.ps1 `
             -resourceGroupName $env:RUNNER_RG `
-            -runnerName $env:RUNNER_NAME
+            -runnerName $env:RUNNER_NAME `
+            -$ApplicationId ${{ secrets.service_principal_client_id }} `
+            $SecuredPassword ${{ secrets.service_principal_client_secret }}
       
 
       - name: Delete Runner VM
