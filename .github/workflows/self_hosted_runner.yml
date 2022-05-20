@@ -25,6 +25,7 @@ on:
 env:
   RUNNER_RG: SelfhostedTest
   VNET_NAME: vnet1
+  HUB_SUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
   
 jobs:
   build-runner:
@@ -81,6 +82,13 @@ jobs:
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nsg ""
+            
+      - name: Create Policy Exemptions for Platform Runner
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: $RUNNER_RG
+          template: policy-exemptions/runner-policy-exemptions.json
+          parameters: vmName="TestRunner" builtinAssignment=${{ env.HUB_SUB }}
 
       - name: Delete Runner VM
         if: github.event.inputs.CreateOrDelete == 'Delete'
