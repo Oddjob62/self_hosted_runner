@@ -8,12 +8,6 @@
         "description": "Please provide the name of the VM runner"
       }
     },
-    "topManagementGroupName": {
-      "type": "string",
-      "metadata": {
-        "description": "Please provide the name of the Management Group"
-      }
-    },
     "builtinAssignment": {
       "type": "string",
       "metadata": {
@@ -23,39 +17,10 @@
   },
   "variables": {
     "scope": "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]",
-    "policyAssignmentIdDeployASCMonitoring": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topManagementGroupName'), '/providers/Microsoft.Authorization/policyAssignments/Deploy-ASC-Monitoring')]",
     "policyAssignmentIdDeployASCDefault": "[concat('/subscriptions/', parameters('builtinAssignment'), '/providers/microsoft.authorization/policyassignments/securitycenterbuiltin')]"
   },
   "functions": [  ],
   "resources": [
-    {
-      "type": "Microsoft.Authorization/policyExemptions",
-      "apiVersion": "2020-07-01-preview",
-      "name": "ASC-Monitoring JIT access ports of virtual machines",
-      "scope": "[variables('scope')]",
-      "properties": {
-        "description": "JIT not enabled",
-        "displayName": "ASC-Monitoring JIT access ports of virtual machines",
-        "exemptionCategory": "Waiver",
-        "metadata": {},
-        "policyAssignmentId": "[variables('policyAssignmentIdDeployASCMonitoring')]",
-        "policyDefinitionReferenceIds": ["jitNetworkAccessMonitoring"]
-      }
-    },
-    {
-      "type": "Microsoft.Authorization/policyExemptions",
-      "apiVersion": "2020-07-01-preview",
-      "name": "ASC-Monitoring Vulnerability assessment virtual machines",
-      "scope": "[variables('scope')]",
-      "properties": {
-        "description": "VM fully Locked down",
-        "displayName": "ASC-Monitoring Vulnerability assessment virtual machines",
-        "exemptionCategory": "Waiver",
-        "metadata": {},
-        "policyAssignmentId": "[variables('policyAssignmentIdDeployASCMonitoring')]",
-        "policyDefinitionReferenceIds": ["serverVulnerabilityAssessment"]
-      }
-    },
     {
       "type": "Microsoft.Authorization/policyExemptions",
       "apiVersion": "2020-07-01-preview",
@@ -68,20 +33,6 @@
         "metadata": {},
         "policyAssignmentId": "[variables('policyAssignmentIdDeployASCDefault')]",
         "policyDefinitionReferenceIds": ["serverVulnerabilityAssessment"]
-      }
-    },
-    {
-      "type": "Microsoft.Authorization/policyExemptions",
-      "apiVersion": "2020-07-01-preview",
-      "name": "ASC-Monitoring Log Analytics agent should be installed on VMs",
-      "scope": "[variables('scope')]",
-      "properties": {
-        "description": "VM fully Locked down",
-        "displayName": "ASC-Monitoring Log Analytics agent should be installed on VMs",
-        "exemptionCategory": "Waiver",
-        "metadata": {},
-        "policyAssignmentId": "[variables('policyAssignmentIdDeployASCMonitoring')]",
-        "policyDefinitionReferenceIds": ["installLogAnalyticsAgentOnVmMonitoring"]
       }
     },
     {
