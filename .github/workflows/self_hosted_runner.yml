@@ -86,7 +86,7 @@ jobs:
       - name: Create Policy Exemptions for Platform Runner
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: $RUNNER_RG
+          resourceGroupName: env.$RUNNER_RG
           template: policy-exemptions/runner-policy-exemptions.json
           parameters: vmName="TestRunner" builtinAssignment=${{ env.HUB_SUB }}
 
