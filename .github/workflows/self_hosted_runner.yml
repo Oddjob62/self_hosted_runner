@@ -100,7 +100,7 @@ jobs:
         if: github.event.inputs.CreateOrDelete == 'Delete'
         shell: pwsh
         run: |
-          $client_secret = ConvertTo-SecureString -string ${{ secrets.service_principal_client_secret }} -AsPlainText 
+          $client_secret = ConvertTo-SecureString -string ${{ secrets.service_principal_client_secret }} -AsPlainText -Force
           ./policy-exemptions/remove-runnerexemptions.ps1 `
             -resourceGroupName $env:RUNNER_RG `
             -runnerName $env:RUNNER_NAME `
