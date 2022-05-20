@@ -12,6 +12,10 @@ on:
         description: 'The service principal client secret'
         required: true
 
+env:
+  RUNNER_RG: SelfhostedTest
+  VNET_NAME: vnet1
+  
 jobs:
   build-runner:
     runs-on: ubuntu-latest
@@ -25,6 +29,12 @@ jobs:
             --service-principal \
             -u ${{ secrets.service_principal_client_id }} \
             -p ${{ secrets.service_principal_client_secret }}
+            
+      - name: Build Foundation
+        run: |
+          az group create -l uksouth -n $RUNNER_RG
+          az network vnet create -g $RUNNER_RG -n $VNET_NAME
+        
 
       - name: Replace tokens
         run: |
@@ -35,7 +45,7 @@ jobs:
 
       - name: Build Runner VM
         run: |
-          subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name "vnet1" -o tsv --query "id")
+          subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
 
           az vm create -g $RUNNER_RG \
             -n "TestRunner" \
@@ -50,6 +60,5 @@ jobs:
             --os-disk-delete-option delete \
             --nsg ""
 
-        env:
-          RUNNER_RG: SelfhostedTest
+
 
