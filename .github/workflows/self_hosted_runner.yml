@@ -26,6 +26,7 @@ env:
   RUNNER_RG: SelfhostedTest
   VNET_NAME: vnet1
   HUB_SUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
+  RUNNER_NAME: TestRunner
   
 jobs:
   build-runner:
@@ -71,7 +72,7 @@ jobs:
           then
           az vm create \
             -g $RUNNER_RG \
-            -n "TestRunner" \
+            -n $RUNNER_NAME \
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
@@ -87,17 +88,25 @@ jobs:
           echo "vm already"
           fi
             
-      - name: Create Policy Exemptions for Platform Runner
+      - name: Create Policy Exemptions for Runner
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: ${{ env.RUNNER_RG }}
+          resourceGroupName: $RUNNER_RG
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName="TestRunner" builtinAssignment=${{ env.HUB_SUB }}
+          parameters: vmName=$RUNNER_NAME builtinAssignment=$HUB_SUB
+          
+      - name: Remove Policy Exemptions for Runner
+        shell: pwsh
+        run: |
+          ./policy-exemptions/remove-runnerexemptions.ps1 `
+            - resourceGroupName = $RUNNER_RG `
+            - runnerName = $RUNNER_NAME
+      
 
       - name: Delete Runner VM
         if: github.event.inputs.CreateOrDelete == 'Delete'
         run: | 
           az vm delete \
-            --name "TestRunner" \
+            --name $RUNNER_NAM \
             --resource-group $RUNNER_RG \
             --yes
