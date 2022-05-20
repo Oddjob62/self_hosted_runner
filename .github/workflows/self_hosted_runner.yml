@@ -33,7 +33,7 @@ jobs:
       - name: Build Foundation
         run: |
           az group create -l uksouth -n $RUNNER_RG
-          az network vnet create -g $RUNNER_RG -n $VNET_NAME
+          az network vnet create --address-prefixes 10.0.0.0/16 -n $VNET_NAME -g $RUNNER_RG  --subnet-name default --subnet-prefixes 10.0.0.0/24
         
 
       - name: Replace tokens
