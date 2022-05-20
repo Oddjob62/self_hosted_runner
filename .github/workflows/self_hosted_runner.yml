@@ -61,8 +61,6 @@ jobs:
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
-#            --ssh-key-value id_rsa.pub \
-#            --admin-username adminuser \
             --custom-data ./scripts/install-runner.sh \
             --subnet $subnetId \
             --nic-delete-option delete \
