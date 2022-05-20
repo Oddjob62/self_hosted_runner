@@ -101,8 +101,8 @@ jobs:
         shell: pwsh
         run: |
           ./policy-exemptions/remove-runnerexemptions.ps1 `
-            - resourceGroupName ${{ env.RUNNER_RG }} `
-            - runnerName ${{ env.RUNNER_NAME }}
+            - resourceGroupName $RUNNER_RG `
+            - runnerName $RUNNER_NAME
       
 
       - name: Delete Runner VM
