@@ -8,5 +8,5 @@ curl -o actions-runner-linux-x64-2.291.1.tar.gz -L https://github.com/actions/ru
 tar xzf ./actions-runner-linux-x64-2.291.1.tar.gz
 ./config.sh --unattended --url https://github.com/replacerepo --token replacetoken --labels replacelabel >> /tmp/output.txt
 echo "url replacerepo, token replacetoken, label replacelabel" >> /tmp/config.txt
-sudo ./svc.sh install
-sudo ./svc.sh start
+sudo ./svc.sh install >>  /tmp/output.txt
+sudo ./svc.sh start >>  /tmp/output.txt
