@@ -14,6 +14,13 @@ on:
       gh_pat:
         description: 'The Github access token'
         required: true
+    inputs:
+      CreateOrDelete:
+        type: choice
+        description: Create/Delete
+        options: 
+        - Create
+        - Delete
 
 env:
   RUNNER_RG: SelfhostedTest
@@ -53,7 +60,8 @@ jobs:
           ls -l
 
       - name: Build Runner VM
-        run: |
+        if: github.event.inputs.CreateOrDelete == "Create"
+        run: | 
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
 
           az vm create -g $RUNNER_RG \
@@ -66,7 +74,14 @@ jobs:
             --subnet $subnetId \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
+            --nic-delete-option delete \
+            --os-disk-delete-option delete \
             --nsg ""
 
-
-
+      - name: Delete Runner VM
+        if: github.event.inputs.CreateOrDelete == "Delete"
+        run: | 
+          az vm delete
+            --name "TestRunner"
+            --resource-group $RUNNER_RG
+            --yes
