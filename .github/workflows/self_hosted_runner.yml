@@ -89,6 +89,7 @@ jobs:
           fi
             
       - name: Create Policy Exemptions for Runner
+        if: github.event.inputs.CreateOrDelete == 'Create'
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: $RUNNER_RG
@@ -96,6 +97,7 @@ jobs:
           parameters: vmName=$RUNNER_NAME builtinAssignment=$HUB_SUB
           
       - name: Remove Policy Exemptions for Runner
+        if: github.event.inputs.CreateOrDelete == 'Delete'
         shell: pwsh
         run: |
           ./policy-exemptions/remove-runnerexemptions.ps1 `
