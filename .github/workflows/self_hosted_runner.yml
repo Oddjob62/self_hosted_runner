@@ -67,7 +67,8 @@ jobs:
         run: | 
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
 
-          az vm create -g $RUNNER_RG \
+          az vm create \
+            -g $RUNNER_RG \
             -n "TestRunner" \
             --size Standard_B2ms \
             --assign-identity "[system]" \
@@ -84,7 +85,7 @@ jobs:
       - name: Delete Runner VM
         if: github.event.inputs.CreateOrDelete == 'Delete'
         run: | 
-          az vm delete
-            --name "TestRunner"
-            --resource-group $RUNNER_RG
+          az vm delete \
+            --name "TestRunner" \
+            --resource-group $RUNNER_RG \
             --yes
