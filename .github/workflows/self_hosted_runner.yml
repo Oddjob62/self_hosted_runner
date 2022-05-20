@@ -67,6 +67,7 @@ jobs:
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nsg ""
+          cat ~/.ssh/id_rsa
 
 
 
