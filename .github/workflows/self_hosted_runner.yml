@@ -41,18 +41,21 @@ jobs:
             -p ${{ secrets.service_principal_client_secret }}
             
       - name: Build Foundation
+        if: github.event.inputs.CreateOrDelete == 'Create'
         run: |
           az group create -l uksouth -n $RUNNER_RG
           az network vnet create --address-prefixes 10.0.0.0/16 -n $VNET_NAME -g $RUNNER_RG  --subnet-name default --subnet-prefixes 10.0.0.0/24
 
       - name: Get Token
         id: get-token
+        if: github.event.inputs.CreateOrDelete == 'Create'
         run: |
           echo ${{ secrets.gh_pat }} | gh auth login --with-token
           token=$(gh api -X POST -H "Accept: application/vnd.github.v3+json" /repos/$GITHUB_REPOSITORY/actions/runners/registration-token | jq .token -r)
           echo "::set-output name=runnertoken::$token"
 
       - name: Replace tokens
+        if: github.event.inputs.CreateOrDelete == 'Create'
         run: |
           sed -i "s/replacetoken/${{ steps.get-token.outputs.runnertoken }}/g" scripts/install-runner.sh
           sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" scripts/install-runner.sh
