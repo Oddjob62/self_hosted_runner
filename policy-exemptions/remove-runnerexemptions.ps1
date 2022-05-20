@@ -2,7 +2,7 @@ param (
   [Parameter(Mandatory)]
   [ValidateNotNullOrEmpty()]
   [string]
-  $resourceGroupName
+  $resourceGroupName,
  
   [Parameter(Mandatory)]
   [ValidateNotNullOrEmpty()]
