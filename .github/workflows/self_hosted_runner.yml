@@ -60,7 +60,7 @@ jobs:
           ls -l
 
       - name: Build Runner VM
-        if: github.event.inputs.CreateOrDelete == "Create"
+        if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
 
