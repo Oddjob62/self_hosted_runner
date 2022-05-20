@@ -60,7 +60,7 @@ jobs:
             -n "TestRunner" \
             --size Standard_B2ms \
             --assign-identity "[system]" \
-            --image UbuntuLTS \
+            --image 20_04-lts \
             --ssh-key-value id_rsa.pub \
             --admin-username adminuser \
             --custom-data ./scripts/install-runner.sh \
