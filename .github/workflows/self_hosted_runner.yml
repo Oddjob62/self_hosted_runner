@@ -67,7 +67,7 @@ jobs:
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
-
+          if [[ $(az vm list -g "${{ inputs.runner_rg }}" --query "[?name=='${{ inputs.runner_name }}'].name" -o tsv) ]]
           az vm create \
             -g $RUNNER_RG \
             -n "TestRunner" \
@@ -82,6 +82,9 @@ jobs:
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nsg ""
+          else
+            echo "vm already"
+          fi
             
       - name: Create Policy Exemptions for Platform Runner
         uses: azure/arm-deploy@v1
