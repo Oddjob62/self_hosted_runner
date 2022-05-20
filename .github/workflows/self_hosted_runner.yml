@@ -99,9 +99,12 @@ jobs:
       - name: Update powershell on runner
         if: github.event.inputs.CreateOrDelete == 'Delete'
         run: | 
-          wget -q https://github.com/PowerShell/PowerShell/releases/download/v$PS_VERSION/powershell-lts_$PS_VERSION-1.deb_amd64.deb
-          sudo dpkg -i powershell-lts_$PS_VERSION-1.deb_amd64.deb
-          sudo apt-get install -f
+          sudo apt-get update
+          sudo apt-get install -y wget apt-transport-https software-properties-common
+          wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+          sudo dpkg -i packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install -y powershell
           sudo pwsh -Command  "Install-Module -Name 'Az' -Force -Scope AllUsers"
 
       - name: Remove Policy Exemptions for Runner
