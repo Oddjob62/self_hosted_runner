@@ -95,6 +95,7 @@ jobs:
             --custom-data ./scripts/install-runner.sh \
             --generate-ssh-keys \
             --subnet $subnetId \
+            --public-ip-addres \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nic-delete-option delete \
@@ -108,7 +109,7 @@ jobs:
         with:
           resourceGroupName: ${{ inputs.runner_rg }}
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName=${{ inputs.runner_name }} builtinAssignment=$SPOKE_SUB_D
+          parameters: vmName=${{ inputs.runner_name }} builtinAssignment=$SPOKE_SUB_ID
         env:
           SPOKE_SUB_ID: ${{ steps.values.outputs.spoke_subscription_id }}
           
