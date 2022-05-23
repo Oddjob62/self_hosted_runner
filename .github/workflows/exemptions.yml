@@ -26,7 +26,7 @@ env:
   RUNNER_RG: SelfhostedTest
   VNET_NAME: vnet1
   HUB_SUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
-  RUNNER_NAME: TestRunner
+  VM_NAME: TestRunner
   
 jobs:
   build-runner:
@@ -48,10 +48,10 @@ jobs:
         with:
           resourceGroupName: ${{ env.RUNNER_RG }}
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName=${{ env.RUNNER_NAME }} builtinAssignment=${{ env.HUB_SUB }}
+          parameters: vmName=${{ env.VM_NAME }} builtinAssignment=${{ env.HUB_SUB }}
           
       - name: Remove Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Delete'
         run: |
-          RUNNER_ID="/subscriptions/ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2/resourceGroups/$RUNNER_RG/providers/Microsoft.Compute/virtualMachines/$RUNNER_NAME"
-          echo $RUNNER_ID
+          RUNNER_ID="/subscriptions/ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2/resourceGroups/$RUNNER_RG/providers/Microsoft.Compute/virtualMachines/$VM_NAME"
+          echo $VM_NAME
