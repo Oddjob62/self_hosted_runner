@@ -111,7 +111,7 @@ jobs:
           template: policy-exemptions/runner-policy-exemptions.json
           parameters: vmName=${{ inputs.runner_name }} builtinAssignment=$SPOKE_SUB_ID
         env:
-          SPOKE_SUB_ID: ${{ steps.values.outputs.spoke_subscription_id }}
+          SPOKE_SUB_ID: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
           
       - name: Delete Runner VM
         if: inputs.action == 'Delete'
