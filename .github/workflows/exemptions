@@ -1,0 +1,62 @@
+name: "Exemptions"
+
+on:
+  workflow_dispatch:
+    secrets:
+      tenant_id:
+        required: true
+      service_principal_client_id:
+        description: 'The service principal client ID'
+        required: true
+      service_principal_client_secret:
+        description: 'The service principal client secret'
+        required: true
+      gh_pat:
+        description: 'The Github access token'
+        required: true
+    inputs:
+      CreateOrDelete:
+        type: choice
+        description: Create/Delete
+        options: 
+        - Create
+        - Delete
+
+env:
+  RUNNER_RG: SelfhostedTest
+  VNET_NAME: vnet1
+  HUB_SUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
+  RUNNER_NAME: TestRunner
+  
+jobs:
+  build-runner:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: az login
+        run: |
+          az login --tenant ${{ secrets.tenant_id }} \
+            --service-principal \
+            -u ${{ secrets.service_principal_client_id }} \
+            -p ${{ secrets.service_principal_client_secret }}
+            
+      - name: Create Policy Exemptions for Runner
+        if: github.event.inputs.CreateOrDelete == 'Create'
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ env.RUNNER_RG }}
+          template: policy-exemptions/runner-policy-exemptions.json
+          parameters: vmName=${{ env.RUNNER_NAME }} builtinAssignment=${{ env.HUB_SUB }}
+          
+      - name: Remove Policy Exemptions for Runner
+        if: github.event.inputs.CreateOrDelete == 'Delete'
+        shell: pwsh
+        run: |
+          $client_secret = ConvertTo-SecureString -string ${{ secrets.service_principal_client_secret }} -AsPlainText -Force
+          ./policy-exemptions/remove-runnerexemptions.ps1 `
+            -resourceGroupName $env:RUNNER_RG `
+            -runnerName $env:RUNNER_NAME `
+            -ApplicationId ${{ secrets.service_principal_client_id }} `
+            -SecuredPassword $client_secret
