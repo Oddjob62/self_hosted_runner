@@ -55,3 +55,5 @@ jobs:
         run: |
           VM_ID="/subscriptions/ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2/resourceGroups/$RUNNER_RG/providers/Microsoft.Compute/virtualMachines/$VM_NAME"
           echo $VM_ID
+          az policy exemption delete --scope $VM_ID
+          
