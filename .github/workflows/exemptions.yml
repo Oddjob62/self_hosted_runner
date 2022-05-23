@@ -52,11 +52,6 @@ jobs:
           
       - name: Remove Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Delete'
-        shell: pwsh
         run: |
-          $client_secret = ConvertTo-SecureString -string ${{ secrets.service_principal_client_secret }} -AsPlainText -Force
-          ./policy-exemptions/remove-runnerexemptions.ps1 `
-            -resourceGroupName $env:RUNNER_RG `
-            -runnerName $env:RUNNER_NAME `
-            -ApplicationId ${{ secrets.service_principal_client_id }} `
-            -SecuredPassword $client_secret
+          RUNNER_ID="/subscriptions/ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2/resourceGroups/$RUNNER_RG/providers/Microsoft.Compute/virtualMachines/$RUNNER_NAME"
+          echo $RUNNER_ID
