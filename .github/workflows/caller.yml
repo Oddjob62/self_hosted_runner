@@ -7,8 +7,8 @@ on:
         type: choice
         description: Create/Delete
         options: 
-        - Create
-        - Delete
+        - create
+        - delete
         
 jobs:
   deploy:

@@ -58,21 +58,21 @@ jobs:
           az account set --subscription ${{ steps.values.outputs.spoke_subscription_id }}
             
       - name: Build Foundation
-        if: inputs.action == 'Create'
+        if: inputs.action == 'create'
         run: |
           az group create -l uksouth -n ${{ inputs.runner_rg }}
           az network vnet create --address-prefixes 10.0.0.0/16 -n $VNETNAME -g ${{ inputs.runner_rg }}  --subnet-name default --subnet-prefixes 10.0.0.0/24
 
       - name: Get Token
         id: get-token
-        if: inputs.action == 'Create'
+        if: inputs.action == 'create'
         run: |
           echo ${{ secrets.gh_pat }} | gh auth login --with-token
           token=$(gh api -X POST -H "Accept: application/vnd.github.v3+json" /repos/$GITHUB_REPOSITORY/actions/runners/registration-token | jq .token -r)
           echo "::set-output name=runnertoken::$token"
 
       - name: Replace tokens
-        if: inputs.action == 'Create'
+        if: inputs.action == 'create'
         run: |
           sed -i "s/replacetoken/${{ steps.get-token.outputs.runnertoken }}/g" scripts/install-runner.sh
           sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" scripts/install-runner.sh
@@ -80,7 +80,7 @@ jobs:
           ls -l
 
       - name: Build Runner VM
-        if: inputs.action == 'Create'
+        if: inputs.action == 'create'
         run: | 
           if [[ $(az vm list --query "[?name=='${{ inputs.runner_name }}']") == [] ]]; then
           subnetId=$(az network vnet subnet show -g ${{ inputs.runner_rg }} -n "default" --vnet-name $VNETNAME -o tsv --query "id")
@@ -102,7 +102,7 @@ jobs:
           fi
             
       - name: Create Policy Exemptions for Runner
-        if: inputs.action == 'Create'
+        if: inputs.action == 'create'
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: ${{ inputs.runner_rg }}
@@ -110,7 +110,7 @@ jobs:
           parameters: vmName=${{ inputs.runner_name }} builtinAssignment=${{ steps.values.outputs.spoke_subscription_id }}
           
       - name: Delete Runner VM
-        if: inputs.action == 'Delete'
+        if: inputs.action == 'delete'
         run: | 
           az vm delete \
             --name ${{ inputs.runner_name }} \
