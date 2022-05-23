@@ -21,7 +21,19 @@ on:
         description: Runner resource group
         required: true
         default: SelfhostedTest
-
+    secrets:
+      tenant_id:
+        required: true
+      service_principal_client_id:
+        description: 'The service principal client ID'
+        required: true
+      service_principal_client_secret:
+        description: 'The service principal client secret'
+        required: true
+      gh_pat:
+        description: 'The Github access token'
+        required: true
+        
 env:
   RUNNERRG: SelfhostedTest
   VNETNAME: vnet1
