@@ -2,18 +2,6 @@ name: "Self-Hosted Runner"
 
 on:
   workflow_call:
-    secrets:
-      tenant_id:
-        required: true
-      service_principal_client_id:
-        description: 'The service principal client ID'
-        required: true
-      service_principal_client_secret:
-        description: 'The service principal client secret'
-        required: true
-      gh_pat:
-        description: 'The Github access token'
-        required: true
     inputs:
       action:
         type: string
