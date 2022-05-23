@@ -1,0 +1,20 @@
+name: "caller workflow"
+
+on:
+  workflow_dispatch:
+    inputs:
+      CreateOrDelete:
+        type: choice
+        description: Create/Delete
+        options: 
+        - Create
+        - Delete
+        
+jobs:
+  deploy:
+    uses: Oddjob62/self_hosted_runner/.github/workflows/self_hosted_runner.yml@main
+    with:
+      action: ${{ github.event.inputs.CreateOrDelete }}
+      runner_name: TestRunner
+      runner_rg: SelfhostedTest
+      spoke_subscription_id: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
