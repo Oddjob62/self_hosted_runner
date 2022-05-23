@@ -1,7 +1,7 @@
 name: "Self-Hosted Runner"
 
 on:
-  workflow_dispatch:
+  workflow_call:
     secrets:
       tenant_id:
         required: true
@@ -16,11 +16,23 @@ on:
         required: true
     inputs:
       CreateOrDelete:
-        type: choice
-        description: Create/Delete
-        options: 
-        - Create
-        - Delete
+        type: string
+        required: true
+      spoke_subscription_id:
+        type: string
+        description: The subscription id of spoke resources
+        required: true
+        default: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
+      runner_name:
+        type: string
+        description: Name of the runner to apply the action to
+        required: true
+        default: TestRunner
+      runner_rg:
+        type: string
+        description: Runner resource group
+        required: true
+        default: SelfhostedTest
 
 env:
   RUNNERRG: SelfhostedTest
@@ -35,12 +47,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Values
+        id: values
+        run: |
+          echo "::set-output name=spoke_subscription_id::${{ inputs.spoke_subscription_id }}"
+
       - name: az login
         run: |
           az login --tenant ${{ secrets.tenant_id }} \
             --service-principal \
             -u ${{ secrets.service_principal_client_id }} \
             -p ${{ secrets.service_principal_client_secret }}
+          az account set --subscription ${{ steps.values.outputs.spoke_subscription_id }}
             
       - name: Build Foundation
         if: github.event.inputs.CreateOrDelete == 'Create'
@@ -87,9 +105,11 @@ jobs:
         if: github.event.inputs.CreateOrDelete == 'Create'
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: ${{ env.RUNNERRG }}
+          resourceGroupName: ${{ inputs.runner_rg }}
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName=${{ env.RUNNERNAME }} builtinAssignment=${{ env.HUBSUB }}
+          parameters: vmName=${{ inputs.runner_name }} builtinAssignment=${SPOKE_SUB_ID}
+        env:
+          SPOKE_SUB_ID: /subscriptions/${{ steps.values.outputs.spoke_subscription_id }}
           
       - name: Delete Runner VM
         if: github.event.inputs.CreateOrDelete == 'Delete'
