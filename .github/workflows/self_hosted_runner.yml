@@ -35,9 +35,7 @@ on:
         required: true
         
 env:
-  RUNNERRG: SelfhostedTest
   VNETNAME: vnet1
-  RUNNERNAME: TestRunner
   
 jobs:
   build-runner:
@@ -62,8 +60,8 @@ jobs:
       - name: Build Foundation
         if: inputs.action == 'Create'
         run: |
-          az group create -l uksouth -n $RUNNERRG
-          az network vnet create --address-prefixes 10.0.0.0/16 -n $VNETNAME -g $RUNNERRG  --subnet-name default --subnet-prefixes 10.0.0.0/24
+          az group create -l uksouth -n ${{ inputs.runner_rg }}
+          az network vnet create --address-prefixes 10.0.0.0/16 -n $VNETNAME -g ${{ inputs.runner_rg }}  --subnet-name default --subnet-prefixes 10.0.0.0/24
 
       - name: Get Token
         id: get-token
@@ -85,10 +83,10 @@ jobs:
         if: inputs.action == 'Create'
         run: | 
           if [[ $(az vm list --query "[?name=='$VMNAME']") == '' ]]; then
-          subnetId=$(az network vnet subnet show -g $RUNNERRG -n "default" --vnet-name $VNETNAME -o tsv --query "id")
+          subnetId=$(az network vnet subnet show -g ${{ inputs.runner_rg }} -n "default" --vnet-name $VNETNAME -o tsv --query "id")
           az vm create \
-            --name $RUNNERNAME \
-            --resource-group $RUNNERRG \
+            --name ${{ inputs.runner_name }} \
+            --resource-group ${{ inputs.runner_rg }} \
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
@@ -115,6 +113,6 @@ jobs:
         if: inputs.action == 'Delete'
         run: | 
           az vm delete \
-            --name $RUNNERNAME \
-            --resource-group $RUNNERRG \
+            --name ${{ inputs.runner_name }} \
+            --resource-group ${{ inputs.runner_rg }} \
             --yes
