@@ -82,7 +82,7 @@ jobs:
       - name: Build Runner VM
         if: inputs.action == 'Create'
         run: | 
-          if [[ $(az vm list --query "[?name=='$VMNAME']") == '' ]]; then
+          if [[ $(az vm list --query "[?name=='${{ inputs.runner_name }}']") == '' ]]; then
           subnetId=$(az network vnet subnet show -g ${{ inputs.runner_rg }} -n "default" --vnet-name $VNETNAME -o tsv --query "id")
           az vm create \
             --name ${{ inputs.runner_name }} \
