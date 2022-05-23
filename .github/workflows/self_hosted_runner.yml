@@ -74,7 +74,8 @@ jobs:
             -g $RUNNER_RG \
             -n $RUNNER_NAME \
             --size Standard_B2ms \
-            --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
+            --assign-identity "[system]" \
+            --image UbuntuLTS \
             --custom-data ./scripts/install-runner.sh \
             --generate-ssh-keys \
             --subnet $subnetId \
