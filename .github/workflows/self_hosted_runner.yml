@@ -74,7 +74,6 @@ jobs:
             -g $RUNNER_RG \
             -n $RUNNER_NAME \
             --size Standard_B2ms \
-            --assign-identity "[system]" \
             --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
             --custom-data ./scripts/install-runner.sh \
             --generate-ssh-keys \
