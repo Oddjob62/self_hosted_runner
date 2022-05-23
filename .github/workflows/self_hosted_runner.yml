@@ -23,9 +23,9 @@ on:
         - Delete
 
 env:
-  RUNNER_RG: SelfhostedTest
-  VNET_NAME: vnet1
-  HUB_SUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
+  RUNNERRG: SelfhostedTest
+  VNETNAME: vnet1
+  HUBSUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
   RUNNERNAME: TestRunner
   
 jobs:
@@ -45,8 +45,8 @@ jobs:
       - name: Build Foundation
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: |
-          az group create -l uksouth -n $RUNNER_RG
-          az network vnet create --address-prefixes 10.0.0.0/16 -n $VNET_NAME -g $RUNNER_RG  --subnet-name default --subnet-prefixes 10.0.0.0/24
+          az group create -l uksouth -n $RUNNERRG
+          az network vnet create --address-prefixes 10.0.0.0/16 -n $VNETNAME -g $RUNNERRG  --subnet-name default --subnet-prefixes 10.0.0.0/24
 
       - name: Get Token
         id: get-token
@@ -67,46 +67,34 @@ jobs:
       - name: Build Runner VM
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
-          subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
+          subnetId=$(az network vnet subnet show -g $RUNNERRG -n "default" --vnet-name $VNETNAME -o tsv --query "id")
           az vm create \
-            -g $RUNNER_RG \
-            -n $RUNNERNAME \
-            --size Standard_B2ms \
-            --assign-identity "[system]" \
-            --image UbuntuLTS \
-            --custom-data ./scripts/install-runner.sh \
-            --generate-ssh-keys \
-            --subnet $subnetId \
-            --nic-delete-option delete \
-            --os-disk-delete-option delete \
-            --nic-delete-option delete \
-            --os-disk-delete-option delete \
-            --nsg ""
+           -g $RUNNERRG \
+           -n $RUNNERNAME \
+           --size Standard_B2ms \
+           --assign-identity "[system]" \
+           --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
+           --custom-data ./scripts/install-runner.sh \
+           --generate-ssh-keys \
+           --subnet $subnetId \
+           --nic-delete-option delete \
+           --os-disk-delete-option delete \
+           --nic-delete-option delete \
+           --os-disk-delete-option delete \
+           --nsg ""
             
       - name: Create Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Create'
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: ${{ env.RUNNER_RG }}
+          resourceGroupName: ${{ env.RUNNERRG }}
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName=${{ env.RUNNERNAME }} builtinAssignment=${{ env.HUB_SUB }}
+          parameters: vmName=${{ env.RUNNERNAME }} builtinAssignment=${{ env.HUBSUB }}
           
-      - name: Remove Policy Exemptions for Runner
-        if: github.event.inputs.CreateOrDelete == 'Delete'
-        shell: pwsh
-        run: |
-          $client_secret = ConvertTo-SecureString -string ${{ secrets.service_principal_client_secret }} -AsPlainText -Force
-          ./policy-exemptions/remove-runnerexemptions.ps1 `
-            -resourceGroupName $env:RUNNER_RG `
-            -runnerName $env:RUNNERNAME `
-            -ApplicationId ${{ secrets.service_principal_client_id }} `
-            -SecuredPassword $client_secret
-      
-
       - name: Delete Runner VM
         if: github.event.inputs.CreateOrDelete == 'Delete'
         run: | 
           az vm delete \
-            --name $RUNNER_NAM \
-            --resource-group $RUNNER_RG \
+            --name $RUNNERNAM \
+            --resource-group $RUNNERRG \
             --yes
