@@ -68,7 +68,7 @@ jobs:
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
-          if [[ $(az vm list -g "${{ inputs.runner_rg }}" --query "[?name=='${{ inputs.runner_name }}'].name" -o tsv) ]]
+          if ![[ $(az vm list -g "${{ inputs.runner_rg }}" --query "[?name=='${{ inputs.runner_name }}'].name" -o tsv) ]]
           then
           az vm create \
             -g $RUNNER_RG \
