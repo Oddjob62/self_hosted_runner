@@ -18,3 +18,8 @@ jobs:
       runner_name: TestRunner
       runner_rg: SelfhostedTest
       spoke_subscription_id: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
+    secrets:
+      tenant_id:  ${{ secrets.tenant_id }}
+      service_principal_client_id:  ${{ secrets.service_principal_client_id }}
+      service_principal_client_secret:  ${{ secrets.service_principal_client_secret }}
+      gh_pat:  ${{ secrets.gh_pat }}
