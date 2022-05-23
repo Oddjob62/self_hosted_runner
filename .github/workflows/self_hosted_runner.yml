@@ -26,7 +26,7 @@ env:
   RUNNER_RG: SelfhostedTest
   VNET_NAME: vnet1
   HUB_SUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
-  RUNNER_NAME: TestRunner
+  RUNNERNAME: TestRunner
   
 jobs:
   build-runner:
@@ -68,11 +68,9 @@ jobs:
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
           subnetId=$(az network vnet subnet show -g $RUNNER_RG -n "default" --vnet-name $VNET_NAME -o tsv --query "id")
-          if [[ ! $(az vm list -g "${{ inputs.runner_rg }}" --query "[?name=='${{ inputs.runner_name }}'].name" -o tsv) ]]
-          then
           az vm create \
             -g $RUNNER_RG \
-            -n $RUNNER_NAME \
+            -n $RUNNERNAME \
             --size Standard_B2ms \
             --assign-identity "[system]" \
             --image UbuntuLTS \
@@ -84,9 +82,6 @@ jobs:
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nsg ""
-          else
-          echo "vm already exists"
-          fi
             
       - name: Create Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Create'
@@ -94,7 +89,7 @@ jobs:
         with:
           resourceGroupName: ${{ env.RUNNER_RG }}
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName=${{ env.RUNNER_NAME }} builtinAssignment=${{ env.HUB_SUB }}
+          parameters: vmName=${{ env.RUNNERNAME }} builtinAssignment=${{ env.HUB_SUB }}
           
       - name: Remove Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Delete'
@@ -103,7 +98,7 @@ jobs:
           $client_secret = ConvertTo-SecureString -string ${{ secrets.service_principal_client_secret }} -AsPlainText -Force
           ./policy-exemptions/remove-runnerexemptions.ps1 `
             -resourceGroupName $env:RUNNER_RG `
-            -runnerName $env:RUNNER_NAME `
+            -runnerName $env:RUNNERNAME `
             -ApplicationId ${{ secrets.service_principal_client_id }} `
             -SecuredPassword $client_secret
       
