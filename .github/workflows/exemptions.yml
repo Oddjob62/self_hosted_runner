@@ -53,5 +53,5 @@ jobs:
       - name: Remove Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Delete'
         run: |
-          RUNNER_ID="/subscriptions/ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2/resourceGroups/$RUNNER_RG/providers/Microsoft.Compute/virtualMachines/$VM_NAME"
-          echo $VM_NAME
+          VM_ID="/subscriptions/ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2/resourceGroups/$RUNNER_RG/providers/Microsoft.Compute/virtualMachines/$VM_NAME"
+          echo $VM_ID
