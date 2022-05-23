@@ -85,21 +85,24 @@ jobs:
       - name: Build Runner VM
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
-          subnetId=$(az network vnet subnet show -g $RUNNERRG -n "default" --vnet-name $VNETNAME -o tsv --query "id")
-          az vm create \
-           --name $RUNNERNAME \
-           --resource-group $RUNNERRG \
-           --size Standard_B2ms \
-           --assign-identity "[system]" \
-           --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
-           --custom-data ./scripts/install-runner.sh \
-           --generate-ssh-keys \
-           --subnet $subnetId \
-           --nic-delete-option delete \
-           --os-disk-delete-option delete \
-           --nic-delete-option delete \
-           --os-disk-delete-option delete \
-           --nsg ""
+          if [[ ! az vm list --query "[?name=='$VMNAME']" ]]
+          do
+            subnetId=$(az network vnet subnet show -g $RUNNERRG -n "default" --vnet-name $VNETNAME -o tsv --query "id")
+            az vm create \
+             --name $RUNNERNAME \
+             --resource-group $RUNNERRG \
+             --size Standard_B2ms \
+             --assign-identity "[system]" \
+             --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:20.04.202205100 \
+             --custom-data ./scripts/install-runner.sh \
+             --generate-ssh-keys \
+             --subnet $subnetId \
+             --nic-delete-option delete \
+             --os-disk-delete-option delete \
+             --nic-delete-option delete \
+             --os-disk-delete-option delete \
+             --nsg ""
+           done
             
       - name: Create Policy Exemptions for Runner
         if: github.event.inputs.CreateOrDelete == 'Create'
