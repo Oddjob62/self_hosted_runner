@@ -93,7 +93,7 @@ jobs:
             --custom-data ./scripts/install-runner.sh \
             --generate-ssh-keys \
             --subnet $subnetId \
-            --public-ip-addres \
+            --public-ip-address \
             --nic-delete-option delete \
             --os-disk-delete-option delete \
             --nic-delete-option delete \
