@@ -61,21 +61,21 @@ jobs:
           az account set --subscription ${{ steps.values.outputs.spoke_subscription_id }}
             
       - name: Build Foundation
-        if: github.event.inputs.CreateOrDelete == 'Create'
+        if: inputs.action == 'Create'
         run: |
           az group create -l uksouth -n $RUNNERRG
           az network vnet create --address-prefixes 10.0.0.0/16 -n $VNETNAME -g $RUNNERRG  --subnet-name default --subnet-prefixes 10.0.0.0/24
 
       - name: Get Token
         id: get-token
-        if: github.event.inputs.CreateOrDelete == 'Create'
+        if: inputs.action == 'Create'
         run: |
           echo ${{ secrets.gh_pat }} | gh auth login --with-token
           token=$(gh api -X POST -H "Accept: application/vnd.github.v3+json" /repos/$GITHUB_REPOSITORY/actions/runners/registration-token | jq .token -r)
           echo "::set-output name=runnertoken::$token"
 
       - name: Replace tokens
-        if: github.event.inputs.CreateOrDelete == 'Create'
+        if: inputs.action == 'Create'
         run: |
           sed -i "s/replacetoken/${{ steps.get-token.outputs.runnertoken }}/g" scripts/install-runner.sh
           sed -i "s#replacerepo#Oddjob62/self_hosted_runner#g" scripts/install-runner.sh
@@ -83,7 +83,7 @@ jobs:
           ls -l
 
       - name: Build Runner VM
-        if: github.event.inputs.CreateOrDelete == 'Create'
+        if: inputs.action == 'Create'
         run: | 
           if [[ $(az vm list --query "[?name=='$VMNAME']") == '' ]]; then
           subnetId=$(az network vnet subnet show -g $RUNNERRG -n "default" --vnet-name $VNETNAME -o tsv --query "id")
@@ -104,17 +104,17 @@ jobs:
           fi
             
       - name: Create Policy Exemptions for Runner
-        if: github.event.inputs.CreateOrDelete == 'Create'
+        if: inputs.action == 'Create'
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: ${{ inputs.runner_rg }}
           template: policy-exemptions/runner-policy-exemptions.json
-          parameters: vmName=${{ inputs.runner_name }} builtinAssignment=${SPOKE_SUB_ID}
+          parameters: vmName=${{ inputs.runner_name }} builtinAssignment=$SPOKE_SUB_ID
         env:
           SPOKE_SUB_ID: /subscriptions/${{ steps.values.outputs.spoke_subscription_id }}
           
       - name: Delete Runner VM
-        if: github.event.inputs.CreateOrDelete == 'Delete'
+        if: inputs.action == 'Delete'
         run: | 
           az vm delete \
             --name $RUNNERNAME \
