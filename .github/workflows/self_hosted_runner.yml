@@ -85,7 +85,7 @@ jobs:
       - name: Build Runner VM
         if: github.event.inputs.CreateOrDelete == 'Create'
         run: | 
-          if [[ ! az vm list --query "[?name=='$VMNAME']" ]]
+          if [[ az vm list --query "[?name=='$VMNAME']" == '' ]]
           do
             subnetId=$(az network vnet subnet show -g $RUNNERRG -n "default" --vnet-name $VNETNAME -o tsv --query "id")
             az vm create \
