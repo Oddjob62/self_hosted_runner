@@ -37,7 +37,6 @@ on:
 env:
   RUNNERRG: SelfhostedTest
   VNETNAME: vnet1
-  HUBSUB: ff65e97e-c6be-4f35-b6b7-e52ce88bf5b2
   RUNNERNAME: TestRunner
   
 jobs:
