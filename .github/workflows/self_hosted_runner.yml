@@ -85,7 +85,7 @@ jobs:
             --os-disk-delete-option delete \
             --nsg ""
           else
-          echo "vm already"
+          echo "vm already exists"
           fi
             
       - name: Create Policy Exemptions for Runner
